@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: orders-previews
+  namespace: argocd
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: adrianrevilla009
+          repo: orders
+        requeueAfterSeconds: 120
+  template:
+    metadata:
+      name: 'orders-pr-{{number}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/adrianrevilla009/orders.git
+        targetRevision: '{{head_sha}}'
+        path: deploy/overlay
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'preview-{{number}}'
+      syncPolicy:
+        automated: {prune: true, selfHeal: true}
+        syncOptions: [CreateNamespace=true]

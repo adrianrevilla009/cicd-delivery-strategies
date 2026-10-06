@@ -1,0 +1,56 @@
+{
+  "application": "orders",
+  "name": "deploy-orders",
+  "stages": [
+    {
+      "refId": "1",
+      "type": "deployManifest",
+      "name": "Deploy staging",
+      "requisiteStageRefIds": [],
+      "account": "staging"
+    },
+    {
+      "refId": "2",
+      "type": "runJob",
+      "name": "Smoke tests",
+      "requisiteStageRefIds": [
+        "1"
+      ]
+    },
+    {
+      "refId": "3",
+      "type": "manualJudgment",
+      "name": "Approve prod",
+      "requisiteStageRefIds": [
+        "2"
+      ],
+      "judgmentInputs": []
+    },
+    {
+      "refId": "4",
+      "type": "deployManifest",
+      "name": "Deploy prod canary",
+      "requisiteStageRefIds": [
+        "3"
+      ],
+      "account": "prod"
+    },
+    {
+      "refId": "5",
+      "type": "deployManifest",
+      "name": "Deploy prod full",
+      "requisiteStageRefIds": [
+        "4"
+      ],
+      "account": "prod"
+    }
+  ],
+  "triggers": [
+    {
+      "type": "docker",
+      "enabled": true,
+      "registry": "ghcr.io",
+      "repository": "example/orders"
+    }
+  ]
+}

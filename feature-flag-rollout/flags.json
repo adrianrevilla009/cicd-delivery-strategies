@@ -1,0 +1,10 @@
+{
+  "new-checkout": {
+    "enabled": true,
+    "rollout_percent": 25,
+    "allow": [
+      "user-vip"
+    ],
+    "kill_switch": false
+  }
+}
